@@ -9,13 +9,8 @@ use Nette\Object,
 
 
 
-/*
-run-script
-zoom
-*/
 class Document extends Object implements IResponse
 {
-
 	/** @var int */
 	public $dpi = 200;
 
