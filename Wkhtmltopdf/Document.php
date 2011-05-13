@@ -11,6 +11,12 @@ use Nette\Object,
 
 class Document extends Object implements IResponse
 {
+	/** @var string	NULL means autodetect */
+	public static $executable;
+
+	/** @var array	possible executables */
+	public static $executables = array('wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386');
+
 	/** @var int */
 	public $dpi = 200;
 
@@ -225,27 +231,33 @@ class Document extends Object implements IResponse
 	/**
 	 * Returns PDF document as string.
 	 * @return string
-	 * @throws InvalidStateException
 	 */
 	public function __toString()
 	{
-		$this->convert();
-		$s = stream_get_contents($this->pipes[1]);
-		$this->close();
-		return $s;
+		try {
+			$this->convert();
+			$s = stream_get_contents($this->pipes[1]);
+			$this->close();
+			return $s;
+		} catch (\Exception $e) {
+			trigger_error($e->getMessage(), E_USER_ERROR);
+		}
 	}
 
 
 
 	private function convert()
 	{
-		static $pipes = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
+		if (self::$executable === NULL) {
+			self::$executable = $this->detectExecutable() ?: FALSE;
+		}
+
+		if (self::$executable === FALSE) {
+			throw new InvalidStateException('Cannot found Wkhtmltopdf executable');
+		}
 
 		$m = $this->margin;
-		$cmd = 'wkhtmltopdf -q --disable-smart-shrinking --disable-internal-links'
+		$cmd = self::$executable . ' -q --disable-smart-shrinking --disable-internal-links'
 			. ' -T ' . escapeshellarg($m[0])
 			. ' -R ' . escapeshellarg($m[1])
 			. ' -B ' . escapeshellarg($m[2])
@@ -264,7 +276,33 @@ class Document extends Object implements IResponse
 		foreach ($this->pages as $page) {
 			$cmd .= ' ' . $page->buildShellArgs($this);
 		}
-		$this->p = proc_open($cmd . ' -', $pipes, $this->pipes);
+		$this->p = $this->openProcess($cmd . ' -', $this->pipes);
+	}
+
+
+
+	/**
+	 * Returns path to executable.
+	 * @return string
+	 */
+	protected function detectExecutable()
+	{
+		foreach (self::$executables as $exec) {
+			if (proc_close($this->openProcess("$exec -v", $tmp)) === 1) {
+				return $exec;
+			}
+		}
+	}
+
+
+
+	private function openProcess($cmd, & $pipes)
+	{
+		static $spec = array(
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w'),
+		);
+		return proc_open($cmd, $spec, $pipes);
 	}
 
 
