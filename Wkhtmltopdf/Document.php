@@ -9,6 +9,10 @@ use Nette\Object,
 
 
 
+/**
+ * @property-read PageMeta $header
+ * @property-read PageMeta $footer
+ */
 class Document extends Object implements IResponse
 {
 	/** @var string	NULL means autodetect */
@@ -116,8 +120,8 @@ class Document extends Object implements IResponse
 
 
 	/**
-	 * @param string $file
-	 * @param bool $isCover
+	 * @param string
+	 * @param bool
 	 * @return Page
 	 */
 	public function addFile($file, $isCover = FALSE)

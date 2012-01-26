@@ -34,6 +34,10 @@ class Page extends Object implements IDocumentPart
 
 
 
+	/**
+	 * @param  Document
+	 * @return string
+	 */
 	public function buildShellArgs(Document $document)
 	{
 		$file = $this->file;
