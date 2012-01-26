@@ -57,7 +57,7 @@ class PageMeta extends Object implements IDocumentPart
 	public function buildShellArgs(Document $document)
 	{
 		$file = $this->file;
-		if ($file === NULL) {
+		if ($file === NULL && $this->html !== NULL) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
