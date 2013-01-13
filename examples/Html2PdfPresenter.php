@@ -1,8 +1,6 @@
 <?php
 
 
-
-
 class Html2PdfPresenter extends Nette\Application\UI\Presenter
 {
 	public function renderDefault($html)

@@ -1,8 +1,6 @@
 <?php
 
-require_once __DIR__ . '/loader.php';
-
-
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $tempDir = __DIR__;
 $document = new Wkhtmltopdf\Document($tempDir);
