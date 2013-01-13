@@ -1,0 +1,18 @@
+{
+	"name": "lm/wkhtmltopdf",
+	"description": "Wkhtmltopdf cli wrapper for Nette Framework",
+	"authors": [
+		{
+			"name": "Ladislav Marek",
+			"email": "ladislav@marek.su"
+		}
+	],
+    "require": {
+        "nette/nette": "*"
+    },
+	"autoload" : {
+		"psr-0": {
+			"Wkhtmltopdf\\" : ""
+		}
+	}
+}
