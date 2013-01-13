@@ -6,13 +6,16 @@ use Nette\Object;
 
 
 
+/**
+ * @author Ladislav Marek <ladislav@marek.su>
+ */
 class Toc extends Object implements IDocumentPart
 {
 	/** @var string */
 	public $header = 'Table of contents';
 
 	/** @var float */
-	public $headersSizeShring = 0.9;
+	public $headersSizeShrink = 0.9;
 
 	/** @var string */
 	public $indentationLevel = '1em';
@@ -27,6 +30,6 @@ class Toc extends Object implements IDocumentPart
 	{
 		return ' toc --toc-header-text ' . escapeshellarg($this->header)
 			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
-			. ' --toc-text-size-shrink ' . number_format($this->headersSizeShring, 4, '.', '');
+			. ' --toc-text-size-shrink ' . number_format($this->headersSizeShrink, 4, '.', '');
 	}
 }

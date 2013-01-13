@@ -12,6 +12,8 @@ use Nette\Object,
 /**
  * @property-read PageMeta $header
  * @property-read PageMeta $footer
+ *
+ * @author Ladislav Marek <ladislav@marek.su>
  */
 class Document extends Object implements IResponse
 {
@@ -51,7 +53,7 @@ class Document extends Object implements IResponse
 	/** @var PageMeta */
 	private $footer;
 
-	/** @var array */
+	/** @var array|Page[] */
 	private $pages = array();
 
 	/** @var string */

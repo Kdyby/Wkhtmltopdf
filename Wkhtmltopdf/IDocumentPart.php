@@ -4,8 +4,12 @@ namespace Wkhtmltopdf;
 
 
 
+/**
+ * @author Ladislav Marek <ladislav@marek.su>
+ */
 interface IDocumentPart
 {
+
 	/**
 	 * @param  Document
 	 * @return string
