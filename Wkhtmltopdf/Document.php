@@ -328,7 +328,8 @@ class Document extends Object implements IResponse
 			throw new InvalidStateException($error);
 		}
 		foreach ($this->tmpFiles as $file) {
-			unlink($file);
+			@unlink($file);
 		}
+		$this->tmpFiles = array();
 	}
 }
