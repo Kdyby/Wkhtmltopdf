@@ -269,9 +269,16 @@ class Document extends Object implements IResponse
 			. ' -B ' . escapeshellarg($m[2])
 			. ' -L ' . escapeshellarg($m[3])
 			. ' --dpi ' . escapeshellarg($this->dpi)
-			. ' --page-size ' . escapeshellarg($this->size)
 			. ' --orientation ' . escapeshellarg($this->orientation)
 			. ' --title ' . escapeshellarg($this->title);
+
+		if (is_array($this->size)) {
+			$cmd .= ' --page-width ' . escapeshellarg($this->size[0]);
+			$cmd .= ' --page-height ' . escapeshellarg($this->size[1]);
+
+		} else {
+			$cmd .= ' --page-size ' . escapeshellarg($this->size);
+		}
 
 		if ($this->header !== NULL) {
 			$cmd .= ' ' . $this->header->buildShellArgs($this);
