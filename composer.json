@@ -1,18 +1,21 @@
 {
 	"name": "lm/wkhtmltopdf",
+	"type": "library",
 	"description": "Wkhtmltopdf cli wrapper for Nette Framework",
+	"keywords": ["nette", "pdf", "wkhtmltopdf"],
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 		{
 			"name": "Ladislav Marek",
 			"email": "ladislav@marek.su"
 		}
 	],
-    "require": {
-        "nette/nette": "*"
-    },
-	"autoload" : {
+	"require": {
+		"nette/nette": "*"
+	},
+	"autoload": {
 		"psr-0": {
-			"Wkhtmltopdf\\" : ""
+			"Wkhtmltopdf\\": ""
 		}
 	}
 }
