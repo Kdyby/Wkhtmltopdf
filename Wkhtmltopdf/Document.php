@@ -178,6 +178,7 @@ class Document extends Object implements IResponse
 
 
 	/**
+	 * @internal
 	 * @param  string
 	 * @return string
 	 */
