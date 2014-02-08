@@ -14,4 +14,5 @@ interface IDocumentPart
 	 * @return string
 	 */
 	function buildShellArgs(Document $document);
+
 }

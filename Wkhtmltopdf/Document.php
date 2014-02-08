@@ -16,6 +16,7 @@ use Nette\Object,
  */
 class Document extends Object implements IResponse
 {
+
 	/** @var string	NULL means autodetect */
 	public static $executable;
 
@@ -316,4 +317,5 @@ class Document extends Object implements IResponse
 		}
 		$this->tmpFiles = array();
 	}
+
 }

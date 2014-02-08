@@ -10,6 +10,7 @@ use Nette\Object;
  */
 class PageMeta extends Object implements IDocumentPart
 {
+
 	/** @var string */
 	private $type;
 
@@ -77,4 +78,5 @@ class PageMeta extends Object implements IDocumentPart
 		}
 		return $cmd;
 	}
+
 }

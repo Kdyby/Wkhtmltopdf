@@ -10,6 +10,7 @@ use Nette\Object;
  */
 class Toc extends Object implements IDocumentPart
 {
+
 	/** @var string */
 	public $header = 'Table of contents';
 
@@ -30,4 +31,5 @@ class Toc extends Object implements IDocumentPart
 			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
 			. ' --toc-text-size-shrink ' . number_format($this->headersSizeShrink, 4, '.', '');
 	}
+
 }

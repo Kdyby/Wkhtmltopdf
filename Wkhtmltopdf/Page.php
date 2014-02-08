@@ -54,4 +54,5 @@ class Page extends Object implements IDocumentPart
 			. ($this->javascript ? ' --run-script ' . escapeshellarg($this->javascript) : '')
 			. ' --zoom ' . ($this->zoom * 1);
 	}
+
 }
