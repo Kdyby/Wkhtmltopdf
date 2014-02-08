@@ -5,7 +5,6 @@ namespace Wkhtmltopdf;
 use Nette\Object;
 
 
-
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
@@ -34,7 +33,6 @@ class Page extends Object implements IDocumentPart
 
 	/** @var int */
 	public $zoom = 1;
-
 
 
 	/**

@@ -3,7 +3,6 @@
 namespace Wkhtmltopdf;
 
 
-
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */

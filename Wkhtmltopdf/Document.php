@@ -8,7 +8,6 @@ use Nette\Object,
 	Nette\InvalidStateException;
 
 
-
 /**
  * @property-read PageMeta $header
  * @property-read PageMeta $footer
@@ -69,7 +68,6 @@ class Document extends Object implements IResponse
 	private $pipes;
 
 
-
 	/**
 	 * @param string
 	 */
@@ -77,7 +75,6 @@ class Document extends Object implements IResponse
 	{
 		$this->tmpDir = $tmpDir;
 	}
-
 
 
 	/**
@@ -92,7 +89,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * @return PageMeta
 	 */
@@ -103,7 +99,6 @@ class Document extends Object implements IResponse
 		}
 		return $this->footer;
 	}
-
 
 
 	/**
@@ -120,7 +115,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * @param string
 	 * @param bool
@@ -133,7 +127,6 @@ class Document extends Object implements IResponse
 		$page->isCover = $isCover;
 		return $page;
 	}
-
 
 
 	/**
@@ -150,7 +143,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * @param  IDocumentPart
 	 * @return Document
@@ -160,7 +152,6 @@ class Document extends Object implements IResponse
 		$this->pages[] = $part;
 		return $this;
 	}
-
 
 
 	/**
@@ -176,7 +167,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * @internal
 	 * @param  string
@@ -190,7 +180,6 @@ class Document extends Object implements IResponse
 		file_put_contents($file, $content);
 		return $this->tmpFiles[] = $file;
 	}
-
 
 
 	/**
@@ -218,7 +207,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * Save PDF document to file.
 	 * @param  string
@@ -232,7 +220,6 @@ class Document extends Object implements IResponse
 		fclose($f);
 		$this->close();
 	}
-
 
 
 	/**
@@ -250,7 +237,6 @@ class Document extends Object implements IResponse
 			trigger_error($e->getMessage(), E_USER_ERROR);
 		}
 	}
-
 
 
 	private function convert()
@@ -294,7 +280,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	/**
 	 * Returns path to executable.
 	 * @return string
@@ -309,7 +294,6 @@ class Document extends Object implements IResponse
 	}
 
 
-
 	private function openProcess($cmd, & $pipes)
 	{
 		static $spec = array(
@@ -318,7 +302,6 @@ class Document extends Object implements IResponse
 		);
 		return proc_open($cmd, $spec, $pipes);
 	}
-
 
 
 	private function close()

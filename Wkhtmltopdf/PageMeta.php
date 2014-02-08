@@ -5,7 +5,6 @@ namespace Wkhtmltopdf;
 use Nette\Object;
 
 
-
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
@@ -42,7 +41,6 @@ class PageMeta extends Object implements IDocumentPart
 	public $spacing = 0;
 
 
-
 	/**
 	 * @param string
 	 */
@@ -50,7 +48,6 @@ class PageMeta extends Object implements IDocumentPart
 	{
 		$this->type = $type;
 	}
-
 
 
 	/**

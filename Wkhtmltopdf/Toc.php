@@ -5,7 +5,6 @@ namespace Wkhtmltopdf;
 use Nette\Object;
 
 
-
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
@@ -19,7 +18,6 @@ class Toc extends Object implements IDocumentPart
 
 	/** @var string */
 	public $indentationLevel = '1em';
-
 
 
 	/**
