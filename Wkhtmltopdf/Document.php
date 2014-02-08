@@ -56,11 +56,11 @@ class Document extends Object implements IResponse
 	/** @var array|Page[] */
 	private $pages = array();
 
-	/** @var string */
+	/** @deprecated */
 	public $tmpDir;
 
-	/** @var array */
-	private $tmpFiles = array();
+	/** @var TempFilesStorage */
+	private $tempFilesStorage;
 
 	/** @var resource */
 	private $p;
@@ -70,11 +70,14 @@ class Document extends Object implements IResponse
 
 
 	/**
-	 * @param string
+	 * @param TempFilesStorage|string
 	 */
-	public function __construct($tmpDir)
+	public function __construct($tmpDirOrStorage)
 	{
-		$this->tmpDir = $tmpDir;
+		$this->tempFilesStorage = $tmpDirOrStorage instanceof TempFilesStorage
+			? $tmpDirOrStorage
+			: new TempFilesStorage($tmpDirOrStorage);
+		$this->tmpDir = &$this->tempFilesStorage->directory;
 	}
 
 
@@ -169,17 +172,11 @@ class Document extends Object implements IResponse
 
 
 	/**
-	 * @internal
-	 * @param  string
-	 * @return string
+	 * @deprecated
 	 */
 	public function saveTempFile($content)
 	{
-		do {
-			$file = $this->tmpDir . '/' . md5($content . '.' . lcg_value()) . '.html';
-		} while (file_exists($file));
-		file_put_contents($file, $content);
-		return $this->tmpFiles[] = $file;
+		return $this->tempFilesStorage->save($content);
 	}
 
 
@@ -269,13 +266,13 @@ class Document extends Object implements IResponse
 		}
 
 		if ($this->header !== NULL) {
-			$cmd .= ' ' . $this->header->buildShellArgs($this);
+			$cmd .= ' ' . $this->header->buildShellArgs($this, $this->tempFilesStorage);
 		}
 		if ($this->footer !== NULL) {
-			$cmd .= ' ' . $this->footer->buildShellArgs($this);
+			$cmd .= ' ' . $this->footer->buildShellArgs($this, $this->tempFilesStorage);
 		}
 		foreach ($this->pages as $page) {
-			$cmd .= ' ' . $page->buildShellArgs($this);
+			$cmd .= ' ' . $page->buildShellArgs($this, $this->tempFilesStorage);
 		}
 		$this->p = $this->openProcess($cmd . ' -', $this->pipes);
 	}
@@ -312,10 +309,7 @@ class Document extends Object implements IResponse
 		if (proc_close($this->p) > 0) {
 			throw new InvalidStateException($error);
 		}
-		foreach ($this->tmpFiles as $file) {
-			@unlink($file);
-		}
-		$this->tmpFiles = array();
+		$this->tempFilesStorage->clear();
 	}
 
 }

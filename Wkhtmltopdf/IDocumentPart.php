@@ -13,6 +13,6 @@ interface IDocumentPart
 	 * @param  Document
 	 * @return string
 	 */
-	function buildShellArgs(Document $document);
+	function buildShellArgs(Document $document, TempFilesStorage $tempFilesStorage);
 
 }

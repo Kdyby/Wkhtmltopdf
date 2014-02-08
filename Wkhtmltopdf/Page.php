@@ -39,11 +39,11 @@ class Page extends Object implements IDocumentPart
 	 * @param  Document
 	 * @return string
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document, TempFilesStorage $tempFilesStorage)
 	{
 		$file = $this->file;
 		if ($file === NULL) {
-			$file = $document->saveTempFile((string) $this->html);
+			$file = $tempFilesStorage->save((string) $this->html);
 		}
 
 		return ($this->isCover ? ' cover ' : ' ')

@@ -25,7 +25,7 @@ class Toc extends Object implements IDocumentPart
 	 * @param  Document
 	 * @return string
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document, TempFilesStorage $tempFilesStorage)
 	{
 		return ' toc --toc-header-text ' . escapeshellarg($this->header)
 			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
