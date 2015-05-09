@@ -39,8 +39,6 @@ class DocumentFactory extends Nette\Object
 	 */
 	public function __construct($tempDir, $executable)
 	{
-		Nette\Utils\FileSystem::createDir($tempDir);
-
 		$this->tempDir = $tempDir;
 		$this->executable = $executable;
 	}
@@ -52,6 +50,7 @@ class DocumentFactory extends Nette\Object
 	 */
 	public function create()
 	{
+		Nette\Utils\FileSystem::createDir($this->tempDir);
 		return new Document($this->tempDir, $this->executable);
 	}
 
