@@ -1,5 +1,5 @@
 {
-	"name": "lm/wkhtmltopdf",
+	"name": "kdyby/wkhtmltopdf",
 	"type": "library",
 	"description": "Wkhtmltopdf cli wrapper for Nette Framework",
 	"keywords": ["nette", "pdf", "wkhtmltopdf"],
@@ -11,7 +11,7 @@
 		}
 	],
 	"require": {
-		"nette/nette": "*"
+		"nette/nette": "~2.2"
 	},
 	"autoload": {
 		"psr-0": {
