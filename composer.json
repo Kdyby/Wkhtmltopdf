@@ -14,8 +14,8 @@
 		"nette/nette": "~2.2"
 	},
 	"autoload": {
-		"psr-0": {
-			"Wkhtmltopdf\\": ""
+		"psr-4": {
+			"Kdyby\\Wkhtmltopdf\\": "src/"
 		}
 	}
 }

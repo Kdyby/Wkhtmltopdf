@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $tempDir = __DIR__;
-$document = new Wkhtmltopdf\Document($tempDir);
+$document = new Kdyby\Wkhtmltopdf\Document($tempDir);
 
 $document->addToc('My TOC');
 
