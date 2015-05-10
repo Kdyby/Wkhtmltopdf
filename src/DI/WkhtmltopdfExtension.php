@@ -11,6 +11,7 @@
 namespace Kdyby\Wkhtmltopdf\DI;
 
 use Kdyby;
+use Kdyby\Wkhtmltopdf\Utils\ExecutableFinder;
 use Nette;
 use Nette\PhpGenerator as Code;
 
@@ -36,6 +37,10 @@ class WkhtmltopdfExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
+
+		if ($config['executable'] === NULL) {
+			$config['executable'] = (string) new ExecutableFinder();
+		}
 
 		$builder->addDefinition($this->prefix('documentFactory'))
 			->setClass('Kdyby\Wkhtmltopdf\DocumentFactory', [

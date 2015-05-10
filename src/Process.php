@@ -23,11 +23,6 @@ class Process extends Nette\Object
 {
 
 	/**
-	 * @var array    possible executables
-	 */
-	public static $executables = array('wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386');
-
-	/**
 	 * @var string    NULL means autodetect
 	 */
 	private $executable;
@@ -59,7 +54,11 @@ class Process extends Nette\Object
 	public function open(array $args)
 	{
 		if ($this->executable === NULL) {
-			$this->executable = $this->detectExecutable();
+			$this->executable = (string) new Utils\ExecutableFinder();
+		}
+
+		if (!$this->executable) {
+			throw new \RuntimeException("Please specify path to the wkhtmltopdf binary, it couldn't be autodetected");
 		}
 
 		$cmd = $this->executable;
@@ -76,7 +75,12 @@ class Process extends Nette\Object
 			}
 		});
 
-		$this->p = self::openProcess($this->executedCommand = $cmd . ' -', $this->pipes);
+		static $spec = array(
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w'),
+		);
+
+		$this->p = proc_open($this->executedCommand = $cmd . ' -', $spec, $this->pipes);
 	}
 
 
@@ -131,39 +135,9 @@ class Process extends Nette\Object
 		$this->getOutput(); // wait for process
 		$error = $this->getErrorOutput();
 		if (proc_close($this->p) > 0) {
-			$error = $this->executedCommand . "\n\n" . $error;
-			throw new \RuntimeException($error);
+			$msg = $this->executedCommand . "\n\n" . $error;
+			throw new \RuntimeException($msg);
 		}
-	}
-
-
-
-	/**
-	 * Returns path to executable.
-	 *
-	 * @return string
-	 */
-	protected function detectExecutable()
-	{
-		foreach (self::$executables as $exec) {
-			if (proc_close(self::openProcess("$exec -v", $tmp)) === 1) {
-				return $exec;
-			}
-		}
-
-		throw new \RuntimeException("Please specify path to the wkhtmltopdf binary, it couldn't be autodetected");
-	}
-
-
-
-	private static function openProcess($cmd, & $pipes)
-	{
-		static $spec = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
-
-		return proc_open($cmd, $spec, $pipes);
 	}
 
 }
