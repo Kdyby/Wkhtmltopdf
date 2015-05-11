@@ -18,7 +18,9 @@ New BSD License
 ---------------
 
 Copyright (c) 2011 Ladislav Marek (https://github.com/lm)
+
 Copyright (c) 2014 Filip Procházka (https://filip-prochazka.com)
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
