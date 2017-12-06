@@ -12,6 +12,7 @@
 	],
 	"require": {
 		"php": "^7.1",
+		"kdyby/strict-objects": "^1.0",
 		"nette/application": "^2.4 || ^3.0.0",
 		"nette/di": "^2.4 || ^3.0.0",
 		"nette/http": "^2.4 || ^3.0.0",
