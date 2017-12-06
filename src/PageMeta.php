@@ -61,30 +61,35 @@ class PageMeta extends Object implements IDocumentPart
 
 	/**
 	 * @param  Document
-	 * @return string
+	 * @return array
 	 */
 	public function buildShellArgs(Document $document)
 	{
+		$args = [];
+
 		$file = $this->file;
 		if ($file === NULL && $this->html !== NULL) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
 		if ($file !== NULL) {
-			$cmd = "--$this->type-html " . escapeshellarg($file);
+			$args["--$this->type-html"] = $file;
+
 		} else {
-			$cmd = "--$this->type-left " . escapeshellarg($this->left)
-				. " --$this->type-center " . escapeshellarg($this->center)
-				. " --$this->type-right " . escapeshellarg($this->right);
+			$args["--$this->type-left"] = (string) $this->left;
+			$args["--$this->type-center"] = (string) $this->center;
+			$args["--$this->type-right"] = (string) $this->right;
 		}
-		$cmd .= ' --' . ($this->line ? '' : 'no-') . "$this->type-line";
+
+		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = NULL;
 		if ($this->fontName !== NULL) {
-			$cmd .= " --$this->type-font-name " . escapeshellarg($this->fontName);
+			$args["--$this->type-font-name"] = $this->fontName;
 		}
 		if ($this->fontSize !== NULL) {
-			$cmd .= " --$this->type-font-size " . escapeshellarg($this->fontSize);
+			$args["--$this->type-font-size"] = $this->fontSize;
 		}
-		return $cmd;
+
+		return $args;
 	}
 
 }

@@ -45,7 +45,7 @@ class Page extends Object implements IDocumentPart
 
 	/**
 	 * @param  Document
-	 * @return string
+	 * @return array
 	 */
 	public function buildShellArgs(Document $document)
 	{
@@ -54,13 +54,28 @@ class Page extends Object implements IDocumentPart
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		return ($this->isCover ? ' cover ' : ' ')
-			. escapeshellarg($file)
-			. ($this->encoding ? ' --encoding ' . escapeshellarg($this->encoding) : '')
-			. ($this->usePrintMediaType ? ' --print-media-type' : '')
-			. ($this->styleSheet ? ' --user-style-sheet ' . escapeshellarg($this->styleSheet) : '')
-			. ($this->javascript ? ' --run-script ' . escapeshellarg($this->javascript) : '')
-			. ' --zoom ' . ($this->zoom * 1);
+		$args = [];
+		if ($this->isCover) {
+			$args['cover'] = NULL;
+		}
+
+		$args[] = $file;
+
+		if ($this->encoding) {
+			$args['--encoding'] = $this->encoding;
+		}
+		if ($this->usePrintMediaType) {
+			$args['--print-media-type'] = NULL;
+		}
+		if ($this->styleSheet) {
+			$args['--user-style-sheet'] = $this->styleSheet;
+		}
+		if ($this->javascript) {
+			$args['--run-script'] = $this->javascript;
+		}
+		$args['--zoom'] = $this->zoom * 1;
+
+		return $args;
 	}
 
 }
