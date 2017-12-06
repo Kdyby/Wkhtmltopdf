@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Kdyby\Wkhtmltopdf;
 
 use Kdyby;
@@ -24,11 +26,11 @@ class Toc implements Kdyby\Wkhtmltopdf\IDocumentPart
 	/** @var string */
 	public $header = 'Table of contents';
 
-	/** @var float */
-	public $headersSizeShrink = 0.9;
-
 	/** @var string */
 	public $indentationLevel = '1em';
+
+	/** @var float */
+	public $headersSizeShrink = 0.9;
 
 
 	/**

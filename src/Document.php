@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Kdyby\Wkhtmltopdf;
 
 use Kdyby;
@@ -27,10 +29,10 @@ class Document implements Nette\Application\IResponse
 	/** @var string	null means autodetect */
 	public static $executable;
 
-	/** @var array	possible executables */
+	/** @var array possible executables */
 	public static $executables = ['wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386'];
 
-	/** @varint */
+	/** @var string */
 	public $dpi = 200;
 
 	/** @var array */
@@ -43,7 +45,7 @@ class Document implements Nette\Application\IResponse
 	public $size = 'A4';
 
 	/** @var string */
-	public $title;
+	public $title = '';
 
 	/** @var string */
 	public $encoding;
@@ -54,6 +56,9 @@ class Document implements Nette\Application\IResponse
 	/** @var string */
 	public $styleSheet;
 
+	/** @var string */
+	public $tmpDir;
+
 	/** @var Kdyby\Wkhtmltopdf\PageMeta */
 	private $header;
 
@@ -62,9 +67,6 @@ class Document implements Nette\Application\IResponse
 
 	/** @var array| */
 	private $pages = [];
-
-	/** @var string */
-	public $tmpDir;
 
 	/** @var array */
 	private $tmpFiles = [];
@@ -283,12 +285,12 @@ class Document implements Nette\Application\IResponse
 
 		$m = $this->margin;
 		$cmd = self::$executable . ' -q --disable-smart-shrinking --disable-internal-links'
-			. ' -T ' . escapeshellarg($m[0])
-			. ' -R ' . escapeshellarg($m[1])
-			. ' -B ' . escapeshellarg($m[2])
-			. ' -L ' . escapeshellarg($m[3])
-			. ' --dpi ' . escapeshellarg($this->dpi)
-			. ' --orientation ' . escapeshellarg($this->orientation)
+			. ' -T ' . escapeshellarg((string) $m[0])
+			. ' -R ' . escapeshellarg((string) $m[1])
+			. ' -B ' . escapeshellarg((string) $m[2])
+			. ' -L ' . escapeshellarg((string) $m[3])
+			. ' --dpi ' . escapeshellarg((string) $this->dpi)
+			. ' --orientation ' . escapeshellarg((string) $this->orientation)
 			. ' --title ' . escapeshellarg($this->title);
 
 		if (is_array($this->size)) {
@@ -331,9 +333,11 @@ class Document implements Nette\Application\IResponse
 
 
 	/**
+	 * @param string
+	 * @param array
 	 * @return mixed
 	 */
-	private function openProcess($cmd, & $pipes)
+	private function openProcess($cmd, &$pipes)
 	{
 		static $spec = [
 			1 => ['pipe', 'w'],
