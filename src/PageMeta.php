@@ -10,14 +10,16 @@
 
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object;
+use Kdyby;
+use Nette;
 
 
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class PageMeta extends Object implements IDocumentPart
+class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 {
+	use Nette\SmartObject;
 
 	/** @var string */
 	private $type;
@@ -38,7 +40,7 @@ class PageMeta extends Object implements IDocumentPart
 	public $html;
 
 	/** @var bool */
-	public $line = FALSE;
+	public $line = false;
 
 	/** @var string */
 	public $fontName;
@@ -53,38 +55,42 @@ class PageMeta extends Object implements IDocumentPart
 	/**
 	 * @param string
 	 */
-	public function __construct($type)
+	public function __construct(string $type)
 	{
 		$this->type = $type;
 	}
 
 
 	/**
-	 * @param  Document
+	 * @param Document
 	 * @return string
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Kdyby\Wkhtmltopdf\Document $document): string
 	{
 		$file = $this->file;
-		if ($file === NULL && $this->html !== NULL) {
+
+		if ($file === null && $this->html !== null) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		if ($file !== NULL) {
+		if ($file !== null) {
 			$cmd = "--$this->type-html " . escapeshellarg($file);
+
 		} else {
 			$cmd = "--$this->type-left " . escapeshellarg($this->left)
 				. " --$this->type-center " . escapeshellarg($this->center)
 				. " --$this->type-right " . escapeshellarg($this->right);
 		}
+
 		$cmd .= ' --' . ($this->line ? '' : 'no-') . "$this->type-line";
-		if ($this->fontName !== NULL) {
+		if ($this->fontName !== null) {
 			$cmd .= " --$this->type-font-name " . escapeshellarg($this->fontName);
 		}
-		if ($this->fontSize !== NULL) {
+
+		if ($this->fontSize !== null) {
 			$cmd .= " --$this->type-font-size " . escapeshellarg($this->fontSize);
 		}
+
 		return $cmd;
 	}
-
 }

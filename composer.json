@@ -11,6 +11,7 @@
 		}
 	],
 	"require": {
+		"php" => "^7.1",
 		"nette/application": "~2.4.0",
 		"nette/di": "~2.4.0",
 		"nette/http": "~2.4.0",

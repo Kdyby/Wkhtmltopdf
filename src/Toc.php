@@ -10,14 +10,16 @@
 
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object;
+use Kdyby;
+use Nette;
 
 
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class Toc extends Object implements IDocumentPart
+class Toc implements Kdyby\Wkhtmltopdf\IDocumentPart
 {
+	use Nette\SmartObject;
 
 	/** @var string */
 	public $header = 'Table of contents';
@@ -30,14 +32,13 @@ class Toc extends Object implements IDocumentPart
 
 
 	/**
-	 * @param  Document
+	 * @param Kdyby\Wkhtmltopdf\Document
 	 * @return string
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document): string
 	{
 		return ' toc --toc-header-text ' . escapeshellarg($this->header)
 			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
 			. ' --toc-text-size-shrink ' . number_format($this->headersSizeShrink, 4, '.', '');
 	}
-
 }

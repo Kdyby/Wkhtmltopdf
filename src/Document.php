@@ -10,32 +10,31 @@
 
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object,
-	Nette\Application\IResponse,
-	Nette\Http,
-	Nette\InvalidStateException;
+use Kdyby;
+use Nette;
 
 
 /**
- * @property-read PageMeta $header
- * @property-read PageMeta $footer
+ * @property-read Kdyby\Wkhtmltopdf\PageMeta $header
+ * @property-read Kdyby\Wkhtmltopdf\PageMeta $footer
  *
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class Document extends Object implements IResponse
+class Document implements Nette\Application\IResponse
 {
+	use Nette\SmartObject;
 
-	/** @var string	NULL means autodetect */
+	/** @var string	null means autodetect */
 	public static $executable;
 
 	/** @var array	possible executables */
-	public static $executables = array('wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386');
+	public static $executables = ['wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386'];
 
-	/** @var int */
+	/** @varint */
 	public $dpi = 200;
 
 	/** @var array */
-	public $margin = array(10, 10, 10, 10);
+	public $margin = [10, 10, 10, 10];
 
 	/** @var string */
 	public $orientation = 'portrait';
@@ -50,25 +49,25 @@ class Document extends Object implements IResponse
 	public $encoding;
 
 	/** @var bool */
-	public $usePrintMediaType = TRUE;
+	public $usePrintMediaType = true;
 
 	/** @var string */
 	public $styleSheet;
 
-	/** @var PageMeta */
+	/** @var Kdyby\Wkhtmltopdf\PageMeta */
 	private $header;
 
-	/** @var PageMeta */
+	/** @var Kdyby\Wkhtmltopdf\PageMeta */
 	private $footer;
 
-	/** @var array|Page[] */
-	private $pages = array();
+	/** @var array| */
+	private $pages = [];
 
 	/** @var string */
 	public $tmpDir;
 
 	/** @var array */
-	private $tmpFiles = array();
+	private $tmpFiles = [];
 
 	/** @var resource */
 	private $p;
@@ -80,46 +79,53 @@ class Document extends Object implements IResponse
 	/**
 	 * @param string
 	 */
-	public function __construct($tmpDir)
+	public function __construct(string $tmpDir)
 	{
 		$this->tmpDir = $tmpDir;
 	}
 
 
 	/**
-	 * @return PageMeta
+	 * @return Kdyby\Wkhtmltopdf\PageMeta
 	 */
-	public function getHeader()
+	public function getHeader(): Kdyby\Wkhtmltopdf\PageMeta
 	{
-		if ($this->header === NULL) {
+		if ($this->header === null) {
 			$this->header = new PageMeta('header');
 		}
+
 		return $this->header;
 	}
 
 
 	/**
-	 * @return PageMeta
+	 * @return Kdyby\Wkhtmltopdf\PageMeta
 	 */
-	public function getFooter()
+	public function getFooter(): Kdyby\Wkhtmltopdf\PageMeta
 	{
-		if ($this->footer === NULL) {
+		if ($this->footer === null) {
 			$this->footer = new PageMeta('footer');
 		}
+
 		return $this->footer;
 	}
 
 
 	/**
-	 * @param  string
-	 * @param  bool
-	 * @return Page
+	 * @param string|Nette\Bridges\ApplicationLatte\Template
+	 * @param bool
+	 * @return Kdyby\Wkhtmltopdf\Page
 	 */
-	public function addHtml($html, $isCover = FALSE)
+	public function addHtml($html, bool $isCover = false): Kdyby\Wkhtmltopdf\Page
 	{
+		if ($html instanceof Nette\Bridges\ApplicationLatte\Template) {// $html property without type hint => prevent BC break
+			$html = $html->__toString();
+		}
+
 		$this->pages[] = $page = $this->createPage();
 		$page->html = $html;
 		$page->isCover = $isCover;
+
 		return $page;
 	}
 
@@ -127,36 +133,39 @@ class Document extends Object implements IResponse
 	/**
 	 * @param string
 	 * @param bool
-	 * @return Page
+	 * @return Kdyby\Wkhtmltopdf\Page
 	 */
-	public function addFile($file, $isCover = FALSE)
+	public function addFile(string $file, bool $isCover = false): Kdyby\Wkhtmltopdf\Page
 	{
 		$this->pages[] = $page = $this->createPage();
 		$page->file = $file;
 		$page->isCover = $isCover;
+
 		return $page;
 	}
 
 
 	/**
-	 * @param  string
-	 * @return Toc
+	 * @param string
+	 * @return Kdyby\Wkhtmltopdf\Toc
 	 */
-	public function addToc($header = NULL)
+	public function addToc(string $header = null): Kdyby\Wkhtmltopdf\Toc
 	{
 		$this->pages[] = $toc = new Toc;
-		if ($header !== NULL) {
+
+		if ($header !== null) {
 			$toc->header = $header;
 		}
+
 		return $toc;
 	}
 
 
 	/**
-	 * @param  IDocumentPart
-	 * @return Document
+	 * @param Kdyby\Wkhtmltopdf\IDocumentPart
+	 * @return Kdyby\Wkhtmltopdf\Document
 	 */
-	public function addPart(IDocumentPart $part)
+	public function addPart(IDocumentPart $part): Kdyby\Wkhtmltopdf\Document
 	{
 		$this->pages[] = $part;
 		return $this;
@@ -164,28 +173,30 @@ class Document extends Object implements IResponse
 
 
 	/**
-	 * @return Page
+	 * @return Kdyby\Wkhtmltopdf\Page
 	 */
-	private function createPage()
+	private function createPage(): Kdyby\Wkhtmltopdf\Page
 	{
 		$page = new Page;
 		$page->encoding = $this->encoding;
 		$page->usePrintMediaType = $this->usePrintMediaType;
 		$page->styleSheet = $this->styleSheet;
+
 		return $page;
 	}
 
 
 	/**
 	 * @internal
-	 * @param  string
+	 * @param string
 	 * @return string
 	 */
-	public function saveTempFile($content)
+	public function saveTempFile(string $content): string
 	{
 		do {
 			$file = $this->tmpDir . '/' . md5($content . '.' . lcg_value()) . '.html';
 		} while (file_exists($file));
+
 		file_put_contents($file, $content);
 		return $this->tmpFiles[] = $file;
 	}
@@ -193,21 +204,25 @@ class Document extends Object implements IResponse
 
 	/**
 	 * Send headers and outputs PDF document to browser.
-	 * @throws InvalidStateException
+	 *
+	 * @return void
+	 * @throws Nette\InvalidStateException
 	 */
-	public function send(Http\IRequest $httpRequest, Http\IResponse $httpResponse)
+	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse): void
 	{
 		$this->convert();
 
 		$output = fgets($this->pipes[1], 5);
 		if ($output === '%PDF') {
 			$httpResponse->setContentType('application/pdf');
-			if (strpos($httpRequest->getHeader('User-Agent'), 'MSIE') != FALSE) {
+
+			if (strpos($httpRequest->getHeader('User-Agent'), 'MSIE') != false) {
 				$httpResponse->setHeader('Pragma', 'private');
 				$httpResponse->setHeader('Cache-control', 'private');
 				$httpResponse->setHeader('Accept-Ranges', 'bytes');
 				$httpResponse->setExpiration('- 5 years');
 			}
+
 			echo $output;
 			fpassthru($this->pipes[1]);
 		}
@@ -218,10 +233,12 @@ class Document extends Object implements IResponse
 
 	/**
 	 * Save PDF document to file.
-	 * @param  string
-	 * @throws InvalidStateException
+	 *
+	 * @param string
+	 * @return void
+	 * @throws Nette\InvalidStateException
 	 */
-	public function save($file)
+	public function save(string $file): void
 	{
 		$f = fopen($file, 'w');
 		$this->convert();
@@ -233,6 +250,7 @@ class Document extends Object implements IResponse
 
 	/**
 	 * Returns PDF document as string.
+	 * 
 	 * @return string
 	 */
 	public function __toString()
@@ -242,20 +260,25 @@ class Document extends Object implements IResponse
 			$s = stream_get_contents($this->pipes[1]);
 			$this->close();
 			return $s;
+
 		} catch (\Exception $e) {
 			trigger_error($e->getMessage(), E_USER_ERROR);
 		}
 	}
 
 
+	/**
+	 * @return void
+	 * @throw Nette\InvalidStateException
+	 */
 	private function convert()
 	{
-		if (self::$executable === NULL) {
-			self::$executable = $this->detectExecutable() ?: FALSE;
+		if (self::$executable === null) {
+			self::$executable = $this->detectExecutable() ?: false;
 		}
 
-		if (self::$executable === FALSE) {
-			throw new InvalidStateException('Cannot found Wkhtmltopdf executable');
+		if (self::$executable === false) {
+			throw new Nette\InvalidStateException('Cannot found Wkhtmltopdf executable');
 		}
 
 		$m = $this->margin;
@@ -276,22 +299,26 @@ class Document extends Object implements IResponse
 			$cmd .= ' --page-size ' . escapeshellarg($this->size);
 		}
 
-		if ($this->header !== NULL) {
+		if ($this->header !== null) {
 			$cmd .= ' ' . $this->header->buildShellArgs($this);
 		}
-		if ($this->footer !== NULL) {
+
+		if ($this->footer !== null) {
 			$cmd .= ' ' . $this->footer->buildShellArgs($this);
 		}
+
 		foreach ($this->pages as $page) {
 			$cmd .= ' ' . $page->buildShellArgs($this);
 		}
+
 		$this->p = $this->openProcess($cmd . ' -', $this->pipes);
 	}
 
 
 	/**
 	 * Returns path to executable.
-	 * @return string
+	 * 
+	 * @return void
 	 */
 	protected function detectExecutable()
 	{
@@ -303,27 +330,40 @@ class Document extends Object implements IResponse
 	}
 
 
+	/**
+	 * @return mixed
+	 */
 	private function openProcess($cmd, & $pipes)
 	{
-		static $spec = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
+		static $spec = [
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
+
 		return proc_open($cmd, $spec, $pipes);
 	}
 
 
-	private function close()
+	/**
+	 * @return void
+	 */
+	private function close(): void
 	{
 		stream_get_contents($this->pipes[1]); // wait for process
 		$error = stream_get_contents($this->pipes[2]);
-		if (proc_close($this->p) > 0) {
-			throw new InvalidStateException($error);
-		}
-		foreach ($this->tmpFiles as $file) {
-			@unlink($file);
-		}
-		$this->tmpFiles = array();
-	}
 
+		if (proc_close($this->p) > 0) {
+			throw new Nette\InvalidStateException($error);
+		}
+
+		foreach ($this->tmpFiles as $file) {
+			try {
+				Nette\Utils\FileSystem::delete($file);
+
+			} catch (Nette\IOException $e) {
+			}
+		}
+
+		$this->tmpFiles = [];
+	}
 }

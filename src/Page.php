@@ -10,14 +10,17 @@
 
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object;
+use Kdyby;
+use Nette;
 
 
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class Page extends Object implements IDocumentPart
+class Page implements Kdyby\Wkhtmltopdf\IDocumentPart
 {
+	use Nette\SmartObject;
+
 	/** @var string */
 	public $file;
 
@@ -25,13 +28,13 @@ class Page extends Object implements IDocumentPart
 	public $html;
 
 	/** @var bool */
-	public $isCover = FALSE;
+	public $isCover = false;
 
 	/** @var string */
 	public $encoding;
 
 	/** @var bool */
-	public $usePrintMediaType = TRUE;
+	public $usePrintMediaType = true;
 
 	/** @var string */
 	public $styleSheet;
@@ -44,10 +47,10 @@ class Page extends Object implements IDocumentPart
 
 
 	/**
-	 * @param  Document
+	 * @param Kdyby\Wkhtmltopdf\Document
 	 * @return string
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document): string
 	{
 		$file = $this->file;
 		if ($file === NULL) {
@@ -62,5 +65,4 @@ class Page extends Object implements IDocumentPart
 			. ($this->javascript ? ' --run-script ' . escapeshellarg($this->javascript) : '')
 			. ' --zoom ' . ($this->zoom * 1);
 	}
-
 }
