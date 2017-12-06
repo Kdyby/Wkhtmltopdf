@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Kdyby\Wkhtmltopdf;
 
@@ -24,7 +24,7 @@ use Nette;
  */
 class Document implements Nette\Application\IResponse
 {
-	use Nette\SmartObject;
+	use Kdyby\StrictObjects\Scream;
 
 	/** @var string	null means autodetect */
 	public static $executable;
@@ -335,7 +335,7 @@ class Document implements Nette\Application\IResponse
 	/**
 	 * @param string
 	 * @param array
-	 * @return mixed
+	 * @return resource
 	 */
 	private function openProcess($cmd, &$pipes)
 	{
