@@ -11,10 +11,10 @@
 		}
 	],
 	"require": {
-		"nette/application": "~2.2@dev",
-		"nette/di": "~2.2@dev",
-		"nette/http": "~2.2@dev",
-		"nette/utils": "~2.2@dev"
+		"nette/application": "~2.4.0",
+		"nette/di": "~2.4.0",
+		"nette/http": "~2.4.0",
+		"nette/utils": "~2.4.0"
 	},
 	"autoload": {
 		"psr-4": {
