@@ -75,7 +75,7 @@ class ExecutableFinder
 	 * @param array
 	 * @return resource
 	 */
-	private static function openProcess(string $cmd, array &$pipes): resource
+	private static function openProcess(string $cmd, array &$pipes): \resource
 	{
 		static $spec = [
 			1 => ['pipe', 'w'],
