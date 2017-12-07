@@ -20,7 +20,7 @@ interface IDocumentPart
 {
 	/**
 	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return string
+	 * @return array
 	 */
-	function buildShellArgs(Document $document): string;
+	function buildShellArgs(Document $document): array;
 }
