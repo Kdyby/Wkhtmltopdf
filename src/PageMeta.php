@@ -70,13 +70,13 @@ class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 	public function buildShellArgs(Document $document): array
 	{
 		$args = [];
-
 		$file = $this->file;
-		if ($file === NULL && $this->html !== NULL) {
+
+		if ($file === null && $this->html !== null) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		if ($file !== NULL) {
+		if ($file !== null) {
 			$args["--$this->type-html"] = $file;
 
 		} else {
@@ -85,11 +85,13 @@ class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 			$args["--$this->type-right"] = (string) $this->right;
 		}
 
-		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = NULL;
-		if ($this->fontName !== NULL) {
+		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = null;
+
+		if ($this->fontName !== null) {
 			$args["--$this->type-font-name"] = $this->fontName;
 		}
-		if ($this->fontSize !== NULL) {
+
+		if ($this->fontSize !== null) {
 			$args["--$this->type-font-size"] = $this->fontSize;
 		}
 

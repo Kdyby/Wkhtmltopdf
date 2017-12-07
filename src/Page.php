@@ -54,14 +54,15 @@ class Page implements Kdyby\Wkhtmltopdf\IDocumentPart
 	 */
 	public function buildShellArgs(Document $document): array
 	{
+		$args = [];
 		$file = $this->file;
+
 		if ($file === null) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		$args = [];
 		if ($this->isCover) {
-			$args['cover'] = NULL;
+			$args['cover'] = null;
 		}
 
 		$args[] = $file;
@@ -69,15 +70,19 @@ class Page implements Kdyby\Wkhtmltopdf\IDocumentPart
 		if ($this->encoding) {
 			$args['--encoding'] = $this->encoding;
 		}
+
 		if ($this->usePrintMediaType) {
-			$args['--print-media-type'] = NULL;
+			$args['--print-media-type'] = null;
 		}
+
 		if ($this->styleSheet) {
 			$args['--user-style-sheet'] = $this->styleSheet;
 		}
+
 		if ($this->javascript) {
 			$args['--run-script'] = $this->javascript;
 		}
+
 		$args['--zoom'] = $this->zoom * 1;
 
 		return $args;

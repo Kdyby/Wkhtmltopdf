@@ -17,9 +17,6 @@ use Nette;
 
 
 /**
- * @property-read Kdyby\Wkhtmltopdf\PageMeta $header
- * @property-read Kdyby\Wkhtmltopdf\PageMeta $footer
- *
  * @author Ladislav Marek <ladislav@marek.su>
  */
 class Document implements Nette\Application\IResponse
@@ -59,13 +56,13 @@ class Document implements Nette\Application\IResponse
 	/** @var Kdyby\Wkhtmltopdf\PageMeta */
 	private $footer;
 
-	/** @var array| */
+	/** @var array */
 	private $pages = [];
 
 	/** @var array */
 	private $tmpFiles = [];
 
-	/** @var Process */
+	/** @var Kdyby\Wkhtmltopdf\Process */
 	private $process;
 
 
@@ -188,6 +185,8 @@ class Document implements Nette\Application\IResponse
 	 */
 	public function saveTempFile(string $content): string
 	{
+		Nette\Utils\FileSystem::createDir($this->tmpDir);
+
 		do {
 			$file = $this->tmpDir . '/' . md5($content . '.' . lcg_value()) . '.html';
 		} while (file_exists($file));
@@ -248,7 +247,7 @@ class Document implements Nette\Application\IResponse
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		try {
 			$this->convert();
@@ -264,14 +263,13 @@ class Document implements Nette\Application\IResponse
 
 	/**
 	 * @return void
-	 * @throw Nette\InvalidStateException
 	 */
-	private function convert()
+	private function convert(): void
 	{
 		$args = [
-			'-q' => NULL,
-			'--disable-smart-shrinking' => NULL,
-			'--disable-internal-links' => NULL,
+			'-q' => null,
+			'--disable-smart-shrinking' => null,
+			'--disable-internal-links' => null,
 			'-T' => $this->margin[0],
 			'-R' => $this->margin[1],
 			'-B' => $this->margin[2],
@@ -289,11 +287,11 @@ class Document implements Nette\Application\IResponse
 			$args['--page-size'] = $this->size;
 		}
 
-		if ($this->header !== NULL) {
+		if ($this->header !== null) {
 			$args[] = $this->header->buildShellArgs($this);
 		}
 
-		if ($this->footer !== NULL) {
+		if ($this->footer !== null) {
 			$args[] = $this->footer->buildShellArgs($this);
 		}
 

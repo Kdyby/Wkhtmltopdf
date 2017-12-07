@@ -39,8 +39,10 @@ class Toc implements Kdyby\Wkhtmltopdf\IDocumentPart
 	 */
 	public function buildShellArgs(Document $document): array
 	{
-		return ' toc --toc-header-text ' . escapeshellarg($this->header)
-			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
-			. ' --toc-text-size-shrink ' . number_format($this->headersSizeShrink, 4, '.', '');
+		return [
+			'--toc-header-text' => $this->header,
+			'--toc-level-indentation' => $this->indentationLevel,
+			'--toc-text-size-shrink' => number_format($this->headersSizeShrink, 4, '.', ''),
+		];
 	}
 }

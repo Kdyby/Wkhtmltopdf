@@ -19,41 +19,40 @@ use Nette;
  * @author Ladislav Marek <ladislav@marek.su>
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Process extends Nette\Object
+class Process
 {
+	use Kdyby\StrictObjects\Scream;
 
-	/**
-	 * @var string    NULL means autodetect
-	 */
+	/** @var string null means autodetect */
 	private $executable;
 
-	/**
-	 * @var resource
-	 */
+	/** @var resource */
 	private $p;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $pipes;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $executedCommand;
 
 
-
-	public function __construct($executable = NULL)
+	/**
+	 * @param string
+	 */
+	public function __construct(string $executable = null)
 	{
 		$this->executable = $executable;
 	}
 
 
-
-	public function open(array $args)
+	/**
+	 * @param array
+	 * @return void
+	 * @throws RuntimeException
+	 */
+	public function open(array $args): void
 	{
-		if ($this->executable === NULL) {
+		if ($this->executable === null) {
 			$this->executable = (string) new Utils\ExecutableFinder();
 		}
 
@@ -64,7 +63,7 @@ class Process extends Nette\Object
 		$cmd = $this->executable;
 
 		array_walk_recursive($args, function ($value, $arg) use (&$cmd) {
-			if ($value === NULL) { // option like -q
+			if ($value === null) { // option like -q
 				$cmd .= sprintf(' %s', $arg);
 
 			} elseif (is_numeric($arg)) { // argument
@@ -75,30 +74,31 @@ class Process extends Nette\Object
 			}
 		});
 
-		static $spec = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
+		static $spec = [
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
 
 		$this->p = proc_open($this->executedCommand = $cmd . ' -', $spec, $this->pipes);
 	}
 
 
-
-	public function printOutput()
+	/**
+	 * @return void
+	 */
+	public function printOutput(): void
 	{
 		fpassthru($this->pipes[1]);
 	}
 
 
-
 	/**
-	 * @param int $length
+	 * @param int
 	 * @return string
 	 */
-	public function getOutput($length = NULL)
+	public function getOutput(int $length = null): string
 	{
-		if ($length !== NULL) {
+		if ($length !== null) {
 			return fgets($this->pipes[1], $length);
 		}
 
@@ -106,38 +106,36 @@ class Process extends Nette\Object
 	}
 
 
-
 	/**
-	 * @param resource $stream
+	 * @param resource
+	 * @return void
 	 */
-	public function copyOutputTo($stream)
+	public function copyOutputTo(resource $stream): void
 	{
 		stream_copy_to_stream($this->pipes[1], $stream);
 	}
 
 
-
 	/**
 	 * @return string
 	 */
-	public function getErrorOutput()
+	public function getErrorOutput(): string
 	{
 		return stream_get_contents($this->pipes[2]);
 	}
 
 
-
 	/**
+	 * @return void
 	 * @throws \RuntimeException
 	 */
-	public function close()
+	public function close(): void
 	{
-		$this->getOutput(); // wait for process
+		$this->getOutput();// wait for process
 		$error = $this->getErrorOutput();
 		if (proc_close($this->p) > 0) {
 			$msg = $this->executedCommand . "\n\n" . $error;
 			throw new \RuntimeException($msg);
 		}
 	}
-
 }
