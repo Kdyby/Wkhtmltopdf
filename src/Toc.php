@@ -35,9 +35,9 @@ class Toc implements Kdyby\Wkhtmltopdf\IDocumentPart
 
 	/**
 	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return string
+	 * @return array
 	 */
-	public function buildShellArgs(Document $document): string
+	public function buildShellArgs(Document $document): array
 	{
 		return ' toc --toc-header-text ' . escapeshellarg($this->header)
 			. ' --toc-level-indentation ' . escapeshellarg($this->indentationLevel)
