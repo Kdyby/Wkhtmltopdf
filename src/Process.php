@@ -110,7 +110,7 @@ class Process
 	 * @param resource
 	 * @return void
 	 */
-	public function copyOutputTo(\resource $stream): void
+	public function copyOutputTo($stream): void
 	{
 		stream_copy_to_stream($this->pipes[1], $stream);
 	}
