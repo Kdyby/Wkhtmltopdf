@@ -245,7 +245,7 @@ class Document implements Nette\Application\IResponse
 
 	/**
 	 * Returns PDF document as string.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function __toString()
