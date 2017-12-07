@@ -46,9 +46,11 @@ class ExecutableFinder
 	 */
 	public function __toString(): string
 	{
+		$tmp = [];
+
 		// check if binary is accessible using $PATH
 		foreach (self::$executables as $name) {
-			if (proc_close(self::openProcess("$name -v", [])) === 1) {
+			if (proc_close(self::openProcess("$name -v", $tmp)) === 1) {
 				return $name;
 			}
 		}
