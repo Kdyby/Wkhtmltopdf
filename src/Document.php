@@ -26,13 +26,7 @@ class Document implements Nette\Application\IResponse
 {
 	use Kdyby\StrictObjects\Scream;
 
-	/** @var string	null means autodetect */
-	public static $executable;
-
-	/** @var array possible executables */
-	public static $executables = ['wkhtmltopdf', 'wkhtmltopdf-amd64', 'wkhtmltopdf-i386'];
-
-	/** @var string */
+	/** @var int */
 	public $dpi = 200;
 
 	/** @var array */
@@ -71,19 +65,18 @@ class Document implements Nette\Application\IResponse
 	/** @var array */
 	private $tmpFiles = [];
 
-	/** @var resource */
-	private $p;
-
-	/** @var array */
-	private $pipes;
+	/** @var Process */
+	private $process;
 
 
 	/**
 	 * @param string
+	 * @param string
 	 */
-	public function __construct(string $tmpDir)
+	public function __construct(string $tmpDir, string $executable = null)
 	{
 		$this->tmpDir = $tmpDir;
+		$this->process = new Process($executable);
 	}
 
 
@@ -214,7 +207,7 @@ class Document implements Nette\Application\IResponse
 	{
 		$this->convert();
 
-		$output = fgets($this->pipes[1], 5);
+		$output = $this->process->getOutput(5);
 		if ($output === '%PDF') {
 			$httpResponse->setContentType('application/pdf');
 
@@ -226,7 +219,7 @@ class Document implements Nette\Application\IResponse
 			}
 
 			echo $output;
-			fpassthru($this->pipes[1]);
+			$this->process->printOutput();
 		}
 
 		$this->close();
@@ -244,7 +237,7 @@ class Document implements Nette\Application\IResponse
 	{
 		$f = fopen($file, 'w');
 		$this->convert();
-		stream_copy_to_stream($this->pipes[1], $f);
+		$this->process->copyOutputTo($f);
 		fclose($f);
 		$this->close();
 	}
@@ -259,7 +252,7 @@ class Document implements Nette\Application\IResponse
 	{
 		try {
 			$this->convert();
-			$s = stream_get_contents($this->pipes[1]);
+			$s = $this->process->getOutput();
 			$this->close();
 			return $s;
 
@@ -275,76 +268,40 @@ class Document implements Nette\Application\IResponse
 	 */
 	private function convert()
 	{
-		if (self::$executable === null) {
-			self::$executable = $this->detectExecutable() ?: false;
-		}
-
-		if (self::$executable === false) {
-			throw new Nette\InvalidStateException('Cannot found Wkhtmltopdf executable');
-		}
-
-		$m = $this->margin;
-		$cmd = self::$executable . ' -q --disable-smart-shrinking --disable-internal-links'
-			. ' -T ' . escapeshellarg((string) $m[0])
-			. ' -R ' . escapeshellarg((string) $m[1])
-			. ' -B ' . escapeshellarg((string) $m[2])
-			. ' -L ' . escapeshellarg((string) $m[3])
-			. ' --dpi ' . escapeshellarg((string) $this->dpi)
-			. ' --orientation ' . escapeshellarg((string) $this->orientation)
-			. ' --title ' . escapeshellarg($this->title);
+		$args = [
+			'-q' => NULL,
+			'--disable-smart-shrinking' => NULL,
+			'--disable-internal-links' => NULL,
+			'-T' => $this->margin[0],
+			'-R' => $this->margin[1],
+			'-B' => $this->margin[2],
+			'-L' => $this->margin[3],
+			'--dpi' => $this->dpi,
+			'--orientation' => (string) $this->orientation,
+			'--title' => (string) $this->title,
+		];
 
 		if (is_array($this->size)) {
-			$cmd .= ' --page-width ' . escapeshellarg($this->size[0]);
-			$cmd .= ' --page-height ' . escapeshellarg($this->size[1]);
+			$args['--page-width'] = $this->size[0];
+			$args['--page-height'] = $this->size[1];
 
 		} else {
-			$cmd .= ' --page-size ' . escapeshellarg($this->size);
+			$args['--page-size'] = $this->size;
 		}
 
-		if ($this->header !== null) {
-			$cmd .= ' ' . $this->header->buildShellArgs($this);
+		if ($this->header !== NULL) {
+			$args[] = $this->header->buildShellArgs($this);
 		}
 
-		if ($this->footer !== null) {
-			$cmd .= ' ' . $this->footer->buildShellArgs($this);
+		if ($this->footer !== NULL) {
+			$args[] = $this->footer->buildShellArgs($this);
 		}
 
 		foreach ($this->pages as $page) {
-			$cmd .= ' ' . $page->buildShellArgs($this);
+			$args[] = $page->buildShellArgs($this);
 		}
 
-		$this->p = $this->openProcess($cmd . ' -', $this->pipes);
-	}
-
-
-	/**
-	 * Returns path to executable.
-	 * 
-	 * @return void
-	 */
-	protected function detectExecutable()
-	{
-		foreach (self::$executables as $exec) {
-			if (proc_close($this->openProcess("$exec -v", $tmp)) === 1) {
-				return $exec;
-			}
-		}
-	}
-
-
-	/**
-	 * @param string
-	 * @param array
-	 * @return resource
-	 */
-	private function openProcess($cmd, &$pipes)
-	{
-		static $spec = [
-			1 => ['pipe', 'w'],
-			2 => ['pipe', 'w'],
-		];
-
-		return proc_open($cmd, $spec, $pipes);
+		$this->process->open($args);
 	}
 
 
@@ -353,12 +310,7 @@ class Document implements Nette\Application\IResponse
 	 */
 	private function close(): void
 	{
-		stream_get_contents($this->pipes[1]); // wait for process
-		$error = stream_get_contents($this->pipes[2]);
-
-		if (proc_close($this->p) > 0) {
-			throw new Nette\InvalidStateException($error);
-		}
+		$this->process->close();
 
 		foreach ($this->tmpFiles as $file) {
 			try {

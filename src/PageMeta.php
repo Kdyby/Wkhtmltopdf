@@ -65,32 +65,34 @@ class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 
 	/**
 	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return string
+	 * @return array
 	 */
-	public function buildShellArgs(Document $document): string
+	public function buildShellArgs(Document $document): array
 	{
-		if ($this->file === null && $this->html !== null) {
-			$this->file = $document->saveTempFile((string) $this->html);
+		$args = [];
+
+		$file = $this->file;
+		if ($file === NULL && $this->html !== NULL) {
+			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		if ($this->file !== null) {
-			$cmd = "--$this->type-html " . escapeshellarg($this->file);
+		if ($file !== NULL) {
+			$args["--$this->type-html"] = $file;
 
 		} else {
-			$cmd = "--$this->type-left " . escapeshellarg((string) $this->left)
-				. " --$this->type-center " . escapeshellarg((string) $this->center)
-				. " --$this->type-right " . escapeshellarg((string) $this->right);
+			$args["--$this->type-left"] = (string) $this->left;
+			$args["--$this->type-center"] = (string) $this->center;
+			$args["--$this->type-right"] = (string) $this->right;
 		}
 
-		$cmd .= ' --' . ($this->line ? '' : 'no-') . "$this->type-line";
-		if ($this->fontName !== null) {
-			$cmd .= " --$this->type-font-name " . escapeshellarg((string) $this->fontName);
+		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = NULL;
+		if ($this->fontName !== NULL) {
+			$args["--$this->type-font-name"] = $this->fontName;
+		}
+		if ($this->fontSize !== NULL) {
+			$args["--$this->type-font-size"] = $this->fontSize;
 		}
 
-		if ($this->fontSize !== null) {
-			$cmd .= " --$this->type-font-size " . escapeshellarg((string) $this->fontSize);
-		}
-
-		return $cmd;
+		return $args;
 	}
 }
