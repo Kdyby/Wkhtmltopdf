@@ -4,38 +4,24 @@ php:
   - 7.1
   - 7.2
 
+before_install:
+  - composer self-update
+
 install:
   - sudo apt-get update && sudo apt-get install wkhtmltopdf xvfb
   - mkdir -p vendor/bin
   - wget -O vendor/bin/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
   - php vendor/bin/composer-nette
-  - travis_retry composer install --no-interaction --no-progress
+  - composer install --no-interaction --prefer-source
+
+before_script:
   - composer create-project --prefer-source --no-interaction jakub-onderka/php-parallel-lint vendor/php-parallel-lint ~0.8
   - php vendor/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
+  - composer create-project --prefer-source --no-interaction nette/code-checker vendor/code-checker ~2.2
+  - php vendor/code-checker/src/code-checker.php -d src
+  - php vendor/code-checker/src/code-checker.php -d tests
+
+script: vendor/bin/tester -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
-
-jobs:
-    include:
-        -   env: title="Lowest Dependencies"
-            install:
-                    - travis_retry composer update --no-interaction --no-progress --prefer-lowest --prefer-stable
-
-        -   stage: Code Standard Checker
-            php: 7.1
-            install:
-                - travis_retry composer create-project nette/code-checker temp/code-checker --no-interaction --no-progress
-                - travis_retry composer create-project nette/coding-standard temp/coding-standard --no-interaction --no-progress
-
-            script:
-                - php temp/code-checker/src/code-checker.php --short-arrays --strict-types
-                - php temp/coding-standard/ecs check src tests --config temp/coding-standard/coding-standard-php71.neon
-
-    allow_failures:
-        - stage: Code Standard Checker
-
-sudo: false
-
-notifications:
-    email: false
