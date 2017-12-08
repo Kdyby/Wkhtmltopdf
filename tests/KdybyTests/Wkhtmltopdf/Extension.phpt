@@ -51,4 +51,4 @@ class ExtensionTest extends Tester\TestCase
 
 }
 
-\run(new ExtensionTest());
+\runTest(new ExtensionTest());
