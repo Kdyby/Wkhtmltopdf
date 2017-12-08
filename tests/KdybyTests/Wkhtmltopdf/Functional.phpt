@@ -65,4 +65,4 @@ class FunctionalTest extends Tester\TestCase
 
 }
 
-\run(new FunctionalTest());
+\runTest(new FunctionalTest());
