@@ -51,4 +51,5 @@ class ExtensionTest extends Tester\TestCase
 
 }
 
-\runTest(new ExtensionTest());
+$test = new ExtensionTest;
+$test->run();
