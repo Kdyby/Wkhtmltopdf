@@ -2,7 +2,7 @@ php:
 	date.timezone: Europe/Prague
 
 services:
-	cacheStorage:
+	cache.storage:
 		class: Nette\Caching\Storages\MemoryStorage
 
 http:
