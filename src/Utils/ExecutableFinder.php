@@ -8,48 +8,46 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types = 1);
+
 namespace Kdyby\Wkhtmltopdf\Utils;
 
 use Kdyby;
-use Nette;
-
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ExecutableFinder extends Nette\Object
+class ExecutableFinder
 {
+	use Kdyby\StrictObjects\Scream;
 
-	/**
-	 * @var array
-	 */
-	public static $executables = array(
+	/** @var array */
+	public static $executables = [
 		'wkhtmltopdf',
 		'wkhtmltopdf-amd64',
 		'wkhtmltopdf-i386'
-	);
+	];
 
-	/**
-	 * @var array
-	 */
-	public static $lookupPaths = array(
+	/** @var array */
+	public static $lookupPaths = [
 		'/usr/local/sbin',
 		'/usr/local/bin',
 		'/usr/sbin',
 		'/usr/bin',
 		'/sbin',
 		'/bin',
-	);
-
+	];
 
 
 	/**
-	 * @throws \RuntimeException
 	 * @return string
+	 * @throws \RuntimeException
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
+		$tmp = [];
+
 		// check if binary is accessible using $PATH
 		foreach (self::$executables as $name) {
 			if (proc_close(self::openProcess("$name -v", $tmp)) === 1) {
@@ -67,20 +65,23 @@ class ExecutableFinder extends Nette\Object
 			}
 		}
 
-		trigger_error("Please specify path to the wkhtmltopdf binary, it couldn't be autodetected", E_USER_WARNING);
+		trigger_error('Please specify path to the wkhtmltopdf binary, it couldn\'t be autodetected', E_USER_WARNING);
 		return '';
 	}
 
 
-
-	private static function openProcess($cmd, & $pipes)
+	/**
+	 * @param string
+	 * @param array
+	 * @return resource
+	 */
+	private static function openProcess(string $cmd, array &$pipes)
 	{
-		static $spec = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
+		static $spec = [
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
 
 		return proc_open($cmd, $spec, $pipes);
 	}
-
 }

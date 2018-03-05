@@ -8,16 +8,21 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types = 1);
+
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object;
+use Kdyby;
+use Nette;
 
 
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class Page extends Object implements IDocumentPart
+class Page implements Kdyby\Wkhtmltopdf\IDocumentPart
 {
+	use Kdyby\StrictObjects\Scream;
+
 	/** @var string */
 	public $file;
 
@@ -25,13 +30,13 @@ class Page extends Object implements IDocumentPart
 	public $html;
 
 	/** @var bool */
-	public $isCover = FALSE;
+	public $isCover = false;
 
 	/** @var string */
 	public $encoding;
 
 	/** @var bool */
-	public $usePrintMediaType = TRUE;
+	public $usePrintMediaType = true;
 
 	/** @var string */
 	public $styleSheet;
@@ -44,19 +49,20 @@ class Page extends Object implements IDocumentPart
 
 
 	/**
-	 * @param  Document
+	 * @param Kdyby\Wkhtmltopdf\Document
 	 * @return array
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document): array
 	{
+		$args = [];
 		$file = $this->file;
-		if ($file === NULL) {
+
+		if ($file === null) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		$args = [];
 		if ($this->isCover) {
-			$args['cover'] = NULL;
+			$args['cover'] = null;
 		}
 
 		$args[] = $file;
@@ -64,18 +70,21 @@ class Page extends Object implements IDocumentPart
 		if ($this->encoding) {
 			$args['--encoding'] = $this->encoding;
 		}
+
 		if ($this->usePrintMediaType) {
-			$args['--print-media-type'] = NULL;
+			$args['--print-media-type'] = null;
 		}
+
 		if ($this->styleSheet) {
 			$args['--user-style-sheet'] = $this->styleSheet;
 		}
+
 		if ($this->javascript) {
 			$args['--run-script'] = $this->javascript;
 		}
+
 		$args['--zoom'] = $this->zoom * 1;
 
 		return $args;
 	}
-
 }

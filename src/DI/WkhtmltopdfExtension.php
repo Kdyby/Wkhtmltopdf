@@ -8,13 +8,12 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types=1);
+
 namespace Kdyby\Wkhtmltopdf\DI;
 
 use Kdyby;
-use Kdyby\Wkhtmltopdf\Utils\ExecutableFinder;
 use Nette;
-use Nette\PhpGenerator as Code;
-
 
 
 /**
@@ -22,24 +21,23 @@ use Nette\PhpGenerator as Code;
  */
 class WkhtmltopdfExtension extends Nette\DI\CompilerExtension
 {
+	/** @var array */
+	public $defaults = [
+		'executable' => null,// autodetect
+		'tempDir' => '%tempDir%/wkhtmltopdf',
+	];
+
 
 	/**
-	 * @var array
+	 * @return void
 	 */
-	public $defaults = array(
-		'executable' => NULL, // autodetect
-		'tempDir' => '%tempDir%/wkhtmltopdf',
-	);
-
-
-
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 
-		if ($config['executable'] === NULL) {
-			$config['executable'] = (string) new ExecutableFinder();
+		if ($config['executable'] === null) {
+			$config['executable'] = (string) new Kdyby\Wkhtmltopdf\Utils\ExecutableFinder();
 		}
 
 		$builder->addDefinition($this->prefix('documentFactory'))
@@ -50,15 +48,14 @@ class WkhtmltopdfExtension extends Nette\DI\CompilerExtension
 	}
 
 
-
 	/**
-	 * @param \Nette\Configurator $configurator
+	 * @param Nette\Configurator
+	 * @return void
 	 */
-	public static function register(Nette\Configurator $configurator)
+	public static function register(Nette\Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('wkhtmltopdf', new WkhtmltopdfExtension());
 		};
 	}
-
 }

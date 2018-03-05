@@ -10,7 +10,7 @@ Kdyby/Wkhtmltopdf
 Requirements
 ------------
 
-Kdyby/Wkhtmltopdf requires PHP 5.3.2 or higher.
+Kdyby/Wkhtmltopdf requires PHP 7.1.0 or higher.
 
 - [Nette Framework](https://github.com/nette/nette)
 - [Wkhtmltopdf](http://wkhtmltopdf.org/)

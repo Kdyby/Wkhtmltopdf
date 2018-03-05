@@ -8,19 +8,20 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types = 1);
+
 namespace Kdyby\Wkhtmltopdf;
 
-use Nette\Object;
+use Kdyby;
+use Nette;
 
 
 /**
  * @author Ladislav Marek <ladislav@marek.su>
  */
-class PageMeta extends Object implements IDocumentPart
+class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 {
-
-	/** @var string */
-	private $type;
+	use Kdyby\StrictObjects\Scream;
 
 	/** @var string */
 	public $left;
@@ -38,7 +39,7 @@ class PageMeta extends Object implements IDocumentPart
 	public $html;
 
 	/** @var bool */
-	public $line = FALSE;
+	public $line = false;
 
 	/** @var string */
 	public $fontName;
@@ -49,30 +50,33 @@ class PageMeta extends Object implements IDocumentPart
 	/** @var int */
 	public $spacing = 0;
 
+	/** @var string */
+	private $type;
+
 
 	/**
 	 * @param string
 	 */
-	public function __construct($type)
+	public function __construct(string $type)
 	{
 		$this->type = $type;
 	}
 
 
 	/**
-	 * @param  Document
+	 * @param Kdyby\Wkhtmltopdf\Document
 	 * @return array
 	 */
-	public function buildShellArgs(Document $document)
+	public function buildShellArgs(Document $document): array
 	{
 		$args = [];
-
 		$file = $this->file;
-		if ($file === NULL && $this->html !== NULL) {
+
+		if ($file === null && $this->html !== null) {
 			$file = $document->saveTempFile((string) $this->html);
 		}
 
-		if ($file !== NULL) {
+		if ($file !== null) {
 			$args["--$this->type-html"] = $file;
 
 		} else {
@@ -81,15 +85,16 @@ class PageMeta extends Object implements IDocumentPart
 			$args["--$this->type-right"] = (string) $this->right;
 		}
 
-		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = NULL;
-		if ($this->fontName !== NULL) {
+		$args['--' . ($this->line ? '' : 'no-') . "$this->type-line"] = null;
+
+		if ($this->fontName !== null) {
 			$args["--$this->type-font-name"] = $this->fontName;
 		}
-		if ($this->fontSize !== NULL) {
+
+		if ($this->fontSize !== null) {
 			$args["--$this->type-font-size"] = $this->fontSize;
 		}
 
 		return $args;
 	}
-
 }

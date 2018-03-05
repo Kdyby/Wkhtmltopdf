@@ -8,36 +8,38 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types = 1);
+
 namespace Kdyby\Wkhtmltopdf\Utils;
 
 use Kdyby;
-use Nette;
-
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class XvfbWrapper extends Nette\Object
+class XvfbWrapper
 {
+	use Kdyby\StrictObjects\Scream;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $executable;
 
 
-
-	public function __construct($executable)
+	/**
+	 * @param string
+	 */
+	public function __construct(string $executable)
 	{
 		$this->executable = $executable;
 	}
 
 
-
-	public function __toString()
+	/**
+	 * @return string
+	 */
+	public function __toString(): string
 	{
 		return sprintf('xvfb-run -a --server-args="-screen 0, 1024x768x24" %s', $this->executable);
 	}
-
 }

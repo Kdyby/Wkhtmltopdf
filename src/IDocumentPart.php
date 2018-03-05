@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
+declare(strict_types = 1);
+
 namespace Kdyby\Wkhtmltopdf;
 
 
@@ -16,11 +18,9 @@ namespace Kdyby\Wkhtmltopdf;
  */
 interface IDocumentPart
 {
-
 	/**
-	 * @param  Document
-	 * @return string
+	 * @param Kdyby\Wkhtmltopdf\Document
+	 * @return array
 	 */
-	function buildShellArgs(Document $document);
-
+	function buildShellArgs(Document $document): array;
 }
