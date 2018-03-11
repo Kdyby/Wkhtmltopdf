@@ -15,7 +15,6 @@ use Kdyby\Wkhtmltopdf\Document;
 use Kdyby\Wkhtmltopdf\Utils\ExecutableFinder;
 use Kdyby\Wkhtmltopdf\Utils\XvfbWrapper;
 use Nette;
-use Symfony;
 use Tester;
 use Tester\Assert;
 
@@ -29,9 +28,7 @@ require_once __DIR__ . '/../bootstrap.php';
 class FunctionalTest extends Tester\TestCase
 {
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $binary;
 
 

@@ -26,18 +26,12 @@ class XvfbWrapper
 	private $executable;
 
 
-	/**
-	 * @param string
-	 */
 	public function __construct(string $executable)
 	{
 		$this->executable = $executable;
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function __toString(): string
 	{
 		return sprintf('xvfb-run -a --server-args="-screen 0, 1024x768x24" %s', $this->executable);

@@ -28,9 +28,6 @@ class WkhtmltopdfExtension extends Nette\DI\CompilerExtension
 	];
 
 
-	/**
-	 * @return void
-	 */
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -48,10 +45,6 @@ class WkhtmltopdfExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param Nette\Configurator
-	 * @return void
-	 */
 	public static function register(Nette\Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {

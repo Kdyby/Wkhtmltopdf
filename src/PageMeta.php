@@ -54,19 +54,12 @@ class PageMeta implements Kdyby\Wkhtmltopdf\IDocumentPart
 	private $type;
 
 
-	/**
-	 * @param string
-	 */
 	public function __construct(string $type)
 	{
 		$this->type = $type;
 	}
 
 
-	/**
-	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return array
-	 */
 	public function buildShellArgs(Document $document): array
 	{
 		$args = [];
