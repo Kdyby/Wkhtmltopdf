@@ -48,10 +48,6 @@ class Page implements Kdyby\Wkhtmltopdf\IDocumentPart
 	public $zoom = 1;
 
 
-	/**
-	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return array
-	 */
 	public function buildShellArgs(Document $document): array
 	{
 		$args = [];

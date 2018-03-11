@@ -36,18 +36,13 @@ class Process
 	private $executedCommand;
 
 
-	/**
-	 * @param string
-	 */
-	public function __construct(string $executable = null)
+	public function __construct(?string $executable = null)
 	{
 		$this->executable = $executable;
 	}
 
 
 	/**
-	 * @param array
-	 * @return void
 	 * @throws RuntimeException
 	 */
 	public function open(array $args): void
@@ -83,20 +78,13 @@ class Process
 	}
 
 
-	/**
-	 * @return void
-	 */
 	public function printOutput(): void
 	{
 		fpassthru($this->pipes[1]);
 	}
 
 
-	/**
-	 * @param int
-	 * @return string
-	 */
-	public function getOutput(int $length = null): string
+	public function getOutput(?int $length = null): string
 	{
 		if ($length !== null) {
 			return fgets($this->pipes[1], $length);
@@ -108,7 +96,6 @@ class Process
 
 	/**
 	 * @param resource
-	 * @return void
 	 */
 	public function copyOutputTo($stream): void
 	{
@@ -116,9 +103,6 @@ class Process
 	}
 
 
-	/**
-	 * @return string
-	 */
 	public function getErrorOutput(): string
 	{
 		return stream_get_contents($this->pipes[2]);
@@ -126,7 +110,6 @@ class Process
 
 
 	/**
-	 * @return void
 	 * @throws \RuntimeException
 	 */
 	public function close(): void

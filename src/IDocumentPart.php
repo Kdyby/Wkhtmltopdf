@@ -18,9 +18,5 @@ namespace Kdyby\Wkhtmltopdf;
  */
 interface IDocumentPart
 {
-	/**
-	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return array
-	 */
 	function buildShellArgs(Document $document): array;
 }

@@ -31,10 +31,6 @@ class DocumentFactory
 	private $executable;
 
 
-	/**
-	 * @param string
-	 * @param string
-	 */
 	public function __construct(string $tempDir, string $executable)
 	{
 		$this->tempDir = $tempDir;
@@ -42,9 +38,6 @@ class DocumentFactory
 	}
 
 
-	/**
-	 * @return Kdyby\Wkhtmltopdf\Document
-	 */
 	public function create(): Kdyby\Wkhtmltopdf\Document
 	{
 		return new Document($this->tempDir, $this->executable);

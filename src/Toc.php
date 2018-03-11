@@ -33,10 +33,6 @@ class Toc implements Kdyby\Wkhtmltopdf\IDocumentPart
 	public $headersSizeShrink = 0.9;
 
 
-	/**
-	 * @param Kdyby\Wkhtmltopdf\Document
-	 * @return array
-	 */
 	public function buildShellArgs(Document $document): array
 	{
 		return [

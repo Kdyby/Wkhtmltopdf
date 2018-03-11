@@ -66,20 +66,13 @@ class Document implements Nette\Application\IResponse
 	private $process;
 
 
-	/**
-	 * @param string
-	 * @param string
-	 */
-	public function __construct(string $tmpDir, string $executable = null)
+	public function __construct(string $tmpDir, ?string $executable = null)
 	{
 		$this->tmpDir = $tmpDir;
 		$this->process = new Process($executable);
 	}
 
 
-	/**
-	 * @return Kdyby\Wkhtmltopdf\PageMeta
-	 */
 	public function getHeader(): Kdyby\Wkhtmltopdf\PageMeta
 	{
 		if ($this->header === null) {
@@ -90,9 +83,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @return Kdyby\Wkhtmltopdf\PageMeta
-	 */
 	public function getFooter(): Kdyby\Wkhtmltopdf\PageMeta
 	{
 		if ($this->footer === null) {
@@ -104,9 +94,7 @@ class Document implements Nette\Application\IResponse
 
 
 	/**
-	 * @param string|Nette\Bridges\ApplicationLatte\Template
-	 * @param bool
-	 * @return Kdyby\Wkhtmltopdf\Page
+	 * @param string|Nette\Bridges\ApplicationLatte\Template $html
 	 */
 	public function addHtml($html, bool $isCover = false): Kdyby\Wkhtmltopdf\Page
 	{
@@ -122,11 +110,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @param string
-	 * @param bool
-	 * @return Kdyby\Wkhtmltopdf\Page
-	 */
 	public function addFile(string $file, bool $isCover = false): Kdyby\Wkhtmltopdf\Page
 	{
 		$this->pages[] = $page = $this->createPage();
@@ -137,11 +120,7 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @param string
-	 * @return Kdyby\Wkhtmltopdf\Toc
-	 */
-	public function addToc(string $header = null): Kdyby\Wkhtmltopdf\Toc
+	public function addToc(?string $header = null): Kdyby\Wkhtmltopdf\Toc
 	{
 		$this->pages[] = $toc = new Toc;
 
@@ -153,10 +132,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @param Kdyby\Wkhtmltopdf\IDocumentPart
-	 * @return Kdyby\Wkhtmltopdf\Document
-	 */
 	public function addPart(IDocumentPart $part): Kdyby\Wkhtmltopdf\Document
 	{
 		$this->pages[] = $part;
@@ -164,9 +139,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @return Kdyby\Wkhtmltopdf\Page
-	 */
 	private function createPage(): Kdyby\Wkhtmltopdf\Page
 	{
 		$page = new Page;
@@ -180,8 +152,6 @@ class Document implements Nette\Application\IResponse
 
 	/**
 	 * @internal
-	 * @param string
-	 * @return string
 	 */
 	public function saveTempFile(string $content): string
 	{
@@ -199,7 +169,6 @@ class Document implements Nette\Application\IResponse
 	/**
 	 * Send headers and outputs PDF document to browser.
 	 *
-	 * @return void
 	 * @throws Nette\InvalidStateException
 	 */
 	public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse): void
@@ -228,8 +197,6 @@ class Document implements Nette\Application\IResponse
 	/**
 	 * Save PDF document to file.
 	 *
-	 * @param string
-	 * @return void
 	 * @throws Nette\InvalidStateException
 	 */
 	public function save(string $file): void
@@ -244,8 +211,6 @@ class Document implements Nette\Application\IResponse
 
 	/**
 	 * Returns PDF document as string.
-	 *
-	 * @return string
 	 */
 	public function __toString(): string
 	{
@@ -261,9 +226,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @return void
-	 */
 	private function convert(): void
 	{
 		$args = [
@@ -303,9 +265,6 @@ class Document implements Nette\Application\IResponse
 	}
 
 
-	/**
-	 * @return void
-	 */
 	private function close(): void
 	{
 		$this->process->close();
